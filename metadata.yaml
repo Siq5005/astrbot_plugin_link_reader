@@ -1,0 +1,28 @@
+name: astrbot_plugin_link_reader
+display_name: 链接正文读取
+desc: |-
+  群聊里分享的网页链接，模型原本只能看到一串 URL，打不开也读不了。实测她会去试
+  `astrbot_execute_shell`（仅管理员可用，被拒），失败后编一个理由比如「这个接口可能要
+  登录」——比说不出更糟。
+
+  本插件以高优先级消息处理器运行：从消息里提取前两个链接，抓取后把标题和正文追加到
+  `event.message_str`，让模型在生成回复前就能读到内容。
+
+  **安全**：链接由群友控制，所以抓取前会解析主机并拒绝回环、私有、链路本地、保留和组播
+  地址；重定向的每一跳都会重新检查，响应同时限制时间和体积。
+
+  失败时会给出具体原因（HTTP 403、content-type 不是网页、网络失败、空响应等），让模型如实转述，而不是自己猜一个理由。
+
+  会跳过 astrbot_plugin_multi_parser 已支持的平台域名（那个插件会注入解析结果）（B站、抖音、小红书、贴吧、微博、
+  微信、小黑盒、知乎、番茄、Pixiv、QQ频道/空间），交给那个插件用平台接口解析；
+  GitHub 例外——multi_parser 只给它渲染卡片图，而抓页面能让模型真的读到 README。
+
+  只覆盖静态页面和 JSON 接口。需要 JavaScript 渲染的单页应用（例如小黑盒的分享页）取不到
+  正文，此时会明确告诉模型「页面没有可直接读取的正文」，让它如实说明而不是猜。
+short_desc: 让模型能读到群友发的网页链接正文，而不是只看到一串 URL。
+version: "1.4.0"
+author: Coe
+repo: https://github.com/Siq5005/astrbot_plugin_link_reader
+support_platforms:
+  - aiocqhttp
+astrbot_version: ">=4.16,<5"

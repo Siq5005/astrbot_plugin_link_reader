@@ -1,0 +1,4 @@
+# httpx / beautifulsoup4 / lxml ship with AstrBot; declared here per plugin spec
+httpx
+beautifulsoup4
+lxml
